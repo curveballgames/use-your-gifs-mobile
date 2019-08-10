@@ -13,7 +13,7 @@ class StartGameComponent extends React.Component {
             return null;
         }
 
-        if (this.props.gameStateReducer.gameState === 'playing') {
+        if (['trigger_start_game', 'game_starting', 'awaiting_game_start'].indexOf(this.props.gameStateReducer.gameState) === -1) {
             return null;
         }
 

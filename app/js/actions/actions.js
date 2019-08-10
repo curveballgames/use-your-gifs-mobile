@@ -11,3 +11,16 @@ export function startGameEvent(payload) {
         payload
     }
 }
+
+export function clearError() {
+    return {
+        type: 'clear_error'
+    }
+}
+
+export function submitPrompt(payload) {
+    return {
+        type: 'submit_prompt',
+        payload
+    }
+}

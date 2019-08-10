@@ -10,7 +10,7 @@ export const connectionStateReducer = (state = {connected: false}, action) => {
     return connectionState;
 }
 
-export const roomConnectionReducer = (state = {connectionState: 'disconnected'}, action) => {
+export const roomConnectionReducer = (state = {connectionState: 'disconnected', roomCode: null, playerName: null, controllerName: null}, action) => {
     const newState = {...state};
 
     switch (action.type) {
@@ -31,6 +31,10 @@ export const roomConnectionReducer = (state = {connectionState: 'disconnected'},
             newState.connectionState = 'disconnected';
             newState.roomCode = null;
             newState.playerName = null;
+            break;
+        case 'new_round':
+            newState.controllerName = action.controller;
+            break;
     }
 
     return newState;
@@ -43,6 +47,12 @@ export const errorReducer = (state = {errorMessage: null}, action) => {
         };
     }
 
+    if (action.type === 'clear_error') {
+        return {
+            errorMessage: null
+        }
+    }
+
     return state;
 }
 
@@ -51,19 +61,31 @@ export const gameStateReducer = (state = {previousState: null, gameState: 'lobby
         previousState: state.gameState,
         gameState: state.gameState
     }
-
-    if (action.type === 'trigger_start_game' && state.gameState === 'lobby') {
+    
+    if (action.type === 'trigger_start_game' && state.gameState === 'awaiting_game_start') {
         newState.gameState = 'trigger_start_game';
+    }
+
+    if (action.type === 'player_joined' && state.gameState == 'lobby') {
+        newState.gameState = 'awaiting_game_start';
     }
 
     if (action.type === 'start_game') {
         newState.gameState = 'game_starting'
     }
 
-    if (action.type === 'error' && action.subType === 'start_game') {
-        newState.gameState = 'lobby';
+    if (action.type === 'error') {
+        if (action.subType === 'trigger_start_game') {
+            newState.gameState = 'awaiting_game_start';
+        }
     }
 
+    if (action.type === 'new_round') {
+        newState.gameState = 'prompt_entry';
+    }
+
+    
     newState.hasChanged = newState.gameState !== newState.previousState;
+    console.log(newState);
     return newState;
 }

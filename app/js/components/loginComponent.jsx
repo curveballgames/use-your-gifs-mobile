@@ -41,10 +41,9 @@ class LoginComponent extends React.Component {
         return;
       }
 
-
       this.props.connectToRoom({
           roomCode: this.state.roomCode,
-          playerName: this.state.playerName
+          playerName: this.state.playerName.trim()
       })
     }
 
